@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/head :: head"></head>
+
+<body>
+<div class="wrapper">
+    <div th:replace="fragments/sidebar :: sidebar">sidebar</div>
+    <div class="main-panel">
+        <div th:replace="~{fragments/navbar :: navbar}"></div>
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <!-- 返回按钮 -->
+                    <a href="/article">
+                        <button type="button" class="btn btn-danger">
+                            <i class="fa fa-arrow-circle-left"> 返回</i>
+                        </button>
+                    </a>
+                    <!-- 格式遵循上一级页面 -->
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" class="btn btn-info btn-round"
+                            data-target="#addCategoryModal" data-toggle="modal">
+                        <i class="fa fa-calendar-plus-o">&nbsp;新增分类</i>
+                    </button>
+                    <!-- addCategoryModal(可以复用，使用js修改即可，但是逻辑不简洁，现在直接修改一份静态代码) -->
+                    <div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog"
+                         aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="addCategoryModalLabel">新增文章分类</h5>
+                                    <button type="button" class="close" data-dismiss="modal"
+                                            aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="addCategoryForm">
+                                        <div class="form-group">
+                                            <label class="bmd-label-floating">标题(必填)</label>
+                                            <input name="title" type="text"
+                                                   class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="bmd-label-floating">描述</label>
+                                            <textarea name="description"
+                                                      class="form-control"
+                                                      rows="3"></textarea>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                            data-dismiss="modal">取消
+                                    </button>
+                                    <button type="button" class="btn btn-primary"
+                                            data-toggle="modal"
+                                            data-target="#confirmModal"
+                                            onclick="addCategory()">
+                                        提交
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header card-header-text card-header-primary">
+                                <div class="card-text">
+                                    <h4 class="card-title">所有分类</h4>
+                                </div>
+                            </div>
+                            <div class="card-body row">
+                                <div class="dropdown show" th:each="category : ${categories}">
+                                    <a class="btn btn-secondary dropdown-toggle" href="#" role="button"
+                                       id="dropdownMenuLink"
+                                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                       th:text="${category.getTitle()}">
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                        <!-- 编辑分类 -->
+                                        <a class="dropdown-item"
+                                           th:onclick="showEditModal([[${category.getId()}]], [[${category.getDescription()}]], [[${category.getTitle()}]])">编辑</a>
+                                        <!-- 删除分类 -->
+                                        <a class="dropdown-item" th:onclick="showDeleteModal([[${category.getId()}]])">删除</a>
+                                    </div>
+                                </div>
+                                <!-- deleteModal
+                                只要和嵌套所在的modal不在一个div就能成功调用，需要传参的话可以通过js调用-->
+                                <div th:replace="fragments/modal :: deleteModal"></div>
+                                <!-- editCategoryModal -->
+                                <div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog"
+                                     aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="editCategoryModalLabel">编辑你的文章分类</h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form id="editCategoryForm">
+                                                    <div class="form-group">
+                                                        <label class="bmd-label-static">标题</label><br>
+                                                        <input id="formTitle" name="title" type="text"
+                                                               class="form-control">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="bmd-label-static">描述</label><br>
+                                                        <textarea id="formDescription" name="description"
+                                                                  class="form-control"
+                                                                  rows="3"></textarea>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                        data-dismiss="modal">取消
+                                                </button>
+                                                <button type="button" class="btn btn-primary"
+                                                        data-toggle="modal"
+                                                        data-target="#confirmModal"
+                                                        onclick="editCategory()">
+                                                    提交
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- confirmModal -->
+                                <div th:replace="fragments/modal :: confirmModal"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div th:replace="~{fragments/footer :: footer}">footer</div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    // 全局变量ID，用来存下要删除的文章id
+    let categoryId;
+
+    // 增加分类
+    function addCategory() {
+        let category = document.querySelector("#addCategoryForm");
+        return fetch('/api/category', {
+            method: 'POST',
+            body: new FormData(category)
+        });
+    }
+
+    // 编辑分类
+    function editCategory() {
+        let category = document.querySelector("#editCategoryForm");
+        let form = new FormData(category);
+        form.append("id", categoryId);
+        return fetch('/api/category', {
+            method: 'PUT',
+            body: form
+        });
+    }
+
+    // 删除分类
+    function deleteById() {
+        let form = new FormData();
+        form.append("id", categoryId);
+        return fetch('/api/category', {
+            method: 'DELETE',
+            body: form
+        }).finally(refresh)
+    }
+
+    // 响应删除按钮
+    function showDeleteModal(id) {
+        // 将局部变量“要删除的文章id”存为全局变量，供删除函数调用！
+        categoryId = id;
+        $('#deleteModal').modal('show')
+
+    }
+
+    // 响应编辑按钮
+    function showEditModal(id, title, description) {
+        categoryId = id;
+
+        // 接收参数：分类标题和分类描述，填充到编辑界面弹窗
+        $("#formDescription").attr("placeholder", title);
+        $("#formTitle").attr("placeholder", description);
+
+        // 激活编辑界面弹窗
+        $('#editCategoryModal').modal('show');
+
+    }
+
+
+</script>
+<div th:replace="fragments/js :: js">js</div>
+</body>
+
+</html>

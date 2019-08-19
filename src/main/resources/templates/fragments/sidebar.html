@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh_CN" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>sidebar</title>
+</head>
+<body>
+<div th:fragment="sidebar" class="sidebar" data-color="purple" data-background-color="white"
+     data-image="/img/sidebar-1.jpg">
+    <div class="logo">
+        <a class="simple-text logo-normal">
+            Hello <span sec:authentication="name"></span>
+        </a>
+    </div>
+    <div class="sidebar-wrapper">
+        <ul class="nav">
+            <li class="nav-item" th:classappend="${index_active}">
+                <a class="nav-link" href="/">
+                    <i class="material-icons">dashboard</i>
+                    <p>仪表盘</p>
+                </a>
+            </li>
+            <li class="nav-item" th:classappend="${article_active}">
+                <a class="nav-link" href="/article">
+                    <i class="material-icons">library_books</i>
+                    <p>博客文章</p>
+                </a>
+            </li>
+            <li class="nav-item" th:classappend="${causerie_active}">
+                <a class="nav-link" href="/causerie">
+                    <i class="material-icons">content_paste</i>
+                    <p>博客随笔</p>
+                </a>
+            </li>
+            <li class="nav-item" th:classappend="${user_active}">
+                <a class="nav-link" href="/user">
+                    <i class="material-icons">person</i>
+                    <p>用户信息</p>
+                </a>
+            </li>
+            <li class="nav-item" th:classappend="${site_active}">
+                <a class="nav-link" href="/site">
+                    <i class="material-icons">language</i>
+                    <p>站点资料</p>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh_CN" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/head :: head"></head>
+
+<body>
+<div class="wrapper">
+    <div th:replace="fragments/sidebar :: sidebar">sidebar</div>
+    <div class="main-panel">
+        <div th:replace="~{fragments/navbar :: navbar}"></div>
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header card-header-primary">
+                                <h4 class="card-title">编辑信息</h4>
+                                <p class="card-category">你可以在此处更新你的站点信息</p>
+                            </div>
+                            <div class="card-body">
+                                <form id="site">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group bmd-form-group">
+                                                <label class="bmd-label-static">站点标题</label><br>
+                                                <input name="title" type="text" class="form-control"
+                                                       th:placeholder="${site.title}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group bmd-form-group">
+                                                <label class="bmd-label-static">站点Logo地址</label><br>
+                                                <input name="logo" type="text" class="form-control"
+                                                       th:placeholder="${site.logo}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group bmd-form-group">
+                                                <label class="bmd-label-static">站点图标地址</label><br>
+                                                <input name="favicon" type="text" class="form-control"
+                                                       th:placeholder="${site.favicon}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label class="bmd-label-static">站点页脚</label>
+                                                <div class="form-group bmd-form-group">
+                                                    <label>修改站点页脚显示的内容</label><br>
+                                                    <textarea name="footer" type="text" class="form-control"
+                                                              rows="2"
+                                                              th:placeholder="${site.footer}"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label class="bmd-label-static">关于站点</label>
+                                                <div class="form-group bmd-form-group">
+                                                    <label>添加一些关于站点的描述</label><br>
+                                                    <textarea name="description" type="text" class="form-control"
+                                                              rows="5"
+                                                              th:placeholder="${site.description}"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="button" onclick="updateSite()" data-toggle="modal"
+                                            data-target="#confirmModal"
+                                            class="btn btn-primary pull-right">更新资料
+                                    </button>
+                                    <div th:replace="fragments/modal :: confirmModal"></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card card-profile">
+                            <div class="card-avatar">
+                                <a href="#pablo">
+                                    <img class="img" th:src="${site.logo}">
+                                </a>
+                            </div>
+                            <div class="card-body">
+                                <h6 class="card-category text-gray" th:text="${site.footer}"></h6>
+                                <h4 class="card-title" th:text="${site.title}"></h4>
+                                <p class="card-description" th:text="${site.description}"></p>
+                                <a href="#pablo" class="btn btn-primary btn-round">Follow</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div th:replace="~{fragments/footer :: footer}">footer</div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    function updateSite() {
+        let site = document.querySelector("#site");
+        return fetch('/api/site', {
+            method: 'PUT',
+            body: new FormData(site)
+        })
+    }
+</script>
+<div th:replace="fragments/js :: js">js</div>
+</body>
+
+</html>

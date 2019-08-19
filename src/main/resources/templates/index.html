@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh_CN" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/head :: head"></head>
+<body>
+<div class="wrapper">
+    <div th:replace="fragments/sidebar :: sidebar">sidebar</div>
+    <div class="main-panel">
+        <div th:replace="~{fragments/navbar :: navbar}"></div>
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="card card-stats">
+                            <div class="card-header card-header-warning card-header-icon">
+                                <div class="card-icon">
+                                    <i class="material-icons">content_copy</i>
+                                </div>
+                                <p class="card-category">文章</p>
+                                <h3 class="card-title" th:inline="text">[[${informationService.getArticleCount()}]]
+                                    <small>篇</small>
+                                </h3>
+                            </div>
+                            <div class="card-footer">
+                                <div class="stats">
+                                    <i class="material-icons text-danger">warning</i>
+                                    <i class="material-icons">thumb_up</i>再接再厉！
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="card card-stats">
+                            <div class="card-header card-header-success card-header-icon">
+                                <div class="card-icon">
+                                    <i class="material-icons">store</i>
+                                </div>
+                                <p class="card-category">随笔</p>
+                                <h3 class="card-title" th:inline="text">[[${informationService.getCauserieCount()}]]
+                                    <small>篇</small>
+                                </h3>
+                            </div>
+                            <div class="card-footer">
+                                <div class="stats">
+                                    <i class="material-icons">date_range</i> Last 24 Hours
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="card card-stats">
+                            <div class="card-header card-header-info card-header-icon">
+                                <div class="card-icon">
+                                    <i class="fa fa-twitter"></i>
+                                </div>
+                                <p class="card-category">分类</p>
+                                <h3 class="card-title" th:inline="text">[[${informationService.getCategoryCount()}]]
+                                    <small>个</small>
+                                </h3>
+                            </div>
+                            <div class="card-footer">
+                                <div class="stats">
+                                    <i class="material-icons">update</i> Just Updated
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="card card-stats">
+                            <div class="card-header card-header-danger card-header-icon">
+                                <div class="card-icon">
+                                    <i class="material-icons">info_outline</i>
+                                </div>
+                                <p class="card-category">标签</p>
+                                <h3 class="card-title" th:inline="text">[[${informationService.getTagCount()}]]
+                                    <small>个</small>
+                                </h3>
+                            </div>
+                            <div class="card-footer">
+                                <div class="stats">
+                                    <i class="material-icons">local_offer</i> Tracked from Github
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card card-profile">
+                            <div class="card-avatar">
+                                <a href="#pablo">
+                                    <img class="img" th:src="${user.profile_photo}">
+                                </a>
+                            </div>
+                            <div class="card-body">
+                                <h6 class="card-category text-gray" th:text="${user.email}"></h6>
+                                <h4 class="card-title" th:text="${user.nickname}"></h4>
+                                <p class="card-description" th:text="${user.description}"></p>
+                                <a href="/user" class="btn btn-primary btn-round">更新</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card card-profile">
+                            <div class="card-avatar">
+                                <a href="#pablo">
+                                    <img class="img" th:src="${site.logo}">
+                                </a>
+                            </div>
+                            <div class="card-body">
+                                <h6 class="card-category text-gray" th:text="${site.footer}"></h6>
+                                <h4 class="card-title" th:text="${site.title}"></h4>
+                                <p class="card-description" th:text="${site.description}"></p>
+                                <a href="/site" class="btn btn-primary btn-round">更新</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div th:replace="~{fragments/footer :: footer}">footer</div>
+    </div>
+</div>
+<div th:include="fragments/js :: js">js</div>
+</body>
+
+</html>

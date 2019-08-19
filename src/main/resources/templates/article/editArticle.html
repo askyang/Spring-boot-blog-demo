@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/head :: head"></head>
+
+<body>
+<div class="wrapper">
+    <div th:replace="fragments/sidebar :: sidebar">sidebar</div>
+    <div class="main-panel">
+        <div th:replace="~{fragments/navbar :: navbar}"></div>
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <a href="/article">
+                        <button type="button" class="btn btn-danger">
+                            <i class="fa fa-arrow-circle-left"> 返回</i>
+                        </button>
+                    </a>
+                </div>
+                <div class="row">
+                    <div class="card">
+                        <div class="card-header card-header-primary">
+                            <h4 class="card-title">编辑文章</h4>
+                            <p class="card-category">你可以在此处编辑你的文章</p>
+                        </div>
+                        <div class="card-body">
+                            <form id="editArticle">
+                                <div class="form-group">
+                                    <label class="bmd-label-static">文章标题</label><br>
+                                    <input name="title" type="text" class="form-control"
+                                           th:placeholder="${article.getTitle()}">
+                                    <!-- 文章修改次数当前基础+1 -->
+                                    <input name="update_count" type="hidden" th:value="${article.getUpdate_count()+1}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="bmd-label-static">文章描述</label><br>
+                                    <textarea name="description" class="form-control"
+                                              th:placeholder="${article.getDescription()}"
+                                              rows="3"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="bmd-label-static">文章内容</label><br>
+                                    <textarea name="content" class="form-control"
+                                              th:placeholder="${article.getContent()}"
+                                              rows="12"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="bmd-label-static">创建时间</label><br>
+                                    <input class="form-control" type="text" th:placeholder="${article.getCreate_time()}"
+                                           readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="bmd-label-static">上次编辑时间</label><br>
+                                    <input class="form-control" type="text"
+                                           th:placeholder="${article.getLast_update_time()}"
+                                           readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="bmd-label-static">编辑次数</label><br>
+                                    <input class="form-control" type="text"
+                                           th:placeholder="${article.getUpdate_count()}"
+                                           readonly>
+                                </div>
+                                <button type="button"
+                                        data-toggle="modal"
+                                        data-target="#confirmModal"
+                                        th:onclick="editArticle([[${article.getId()}]])"
+                                        class="btn btn-primary pull-right">提交
+                                </button>
+                                <div th:replace="fragments/modal :: confirmModal"></div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div th:replace="~{fragments/footer :: footer}">footer</div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    function editArticle(id) {
+        let article = document.querySelector("#editArticle");
+        let form = new FormData(article);
+        form.append("id", id);
+        return fetch('/api/article', {
+            method: 'PUT',
+            body: form
+        })
+    }
+</script>
+<div th:replace="fragments/js :: js">js</div>
+</body>
+
+</html>

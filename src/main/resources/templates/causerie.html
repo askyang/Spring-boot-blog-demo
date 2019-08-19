@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/head :: head"></head>
+
+<body>
+<div class="wrapper">
+    <div th:replace="fragments/sidebar :: sidebar">sidebar</div>
+    <div class="main-panel">
+        <div th:replace="~{fragments/navbar :: navbar}"></div>
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <button type="button" class="btn btn-danger"
+                            data-toggle="modal" data-target="#addCauserieModal">
+                        <i class="fa fa-calendar-plus-o">&nbsp;新增随笔</i>
+                    </button>
+                </div>
+                <!-- 展示所有随笔 -->
+                <div class="row">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th class="text-center">#</th>
+                            <th>随笔</th>
+                            <th class="text-right">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="causerie : ${causeries}">
+                            <td class="text-center" th:text="${causerieStat.index}+1"></td>
+                            <td th:text="${causerie.content.length()>80?causerie.content.substring(0,79)+'...':causerie.content}"></td>
+                            <td class="td-actions text-right">
+                                <!-- 编辑按钮 此页弹窗 -->
+                                <button th:onclick="showEditCauserieModal([[${causerie.id}]], [[${causerie.content}]], [[${causerie.create_time}]], [[${causerie.last_update_time}]])"
+                                        type="button" rel="tooltip" class="btn btn-info btn-round">
+                                    <i class="fa fa-pencil fa-fw"></i>
+                                </button>
+                                </a>
+                                <!-- 下架按钮 -->
+                                <button type="button" rel="tooltip" class="btn btn-success btn-round"
+                                        th:onclick="showEditStatusModal([[${causerie.getId()}]], [[${causerie.getStatus()}]])">
+                                    <i th:if="${causerie.getStatus()}" class="fa fa-ban fa-fw"></i>
+                                    <i th:if="${!causerie.getStatus()}" class="fa fa-check fa-fw"></i>
+                                </button>
+                                <!-- 删除按钮 -->
+                                <button type="button" rel="tooltip" class="btn btn-danger btn-round"
+                                        th:onclick="showDeleteModal([[${causerie.getId()}]])">
+                                    <i class="fa fa-trash-o fa-fw"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <!-- editStatusModal-->
+                    <div th:replace="fragments/modal :: editStatusModal"></div>
+                    <!-- deleteModal-->
+                    <div th:replace="fragments/modal :: deleteModal"></div>
+                    <!-- editCauserieModal -->
+                    <div class="modal fade" id="editCauserieModal" tabindex="-1" role="dialog"
+                         aria-labelledby="editCauserieModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editCauserieModalLabel">编辑内容</h5>
+                                    <button type="button" class="close" data-dismiss="modal"
+                                            aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="form-group">
+                                            <label class="bmd-label-static">你可以在此处编辑内容</label><br>
+                                            <textarea id="formEditContent" class="form-control" rows="3"></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="bmd-label-static">创建时间</label><br>
+                                            <input id="formEditCreat_time" class="form-control" type="text" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="bmd-label-static">上次编辑时间</label><br>
+                                            <input id="formEditLast_update_time" class="form-control" type="text"
+                                                   readonly>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                            data-dismiss="modal">取消
+                                    </button>
+                                    <button type="button" class="btn btn-primary"
+                                            data-toggle="modal"
+                                            data-target="#confirmModal"
+                                            onclick="editCauserie()">
+                                        提交
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- addCauserieModal -->
+                    <div class="modal fade" id="addCauserieModal" tabindex="-1" role="dialog"
+                         aria-labelledby="addCauserieModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="addCauserieModalLabel">新增随笔</h5>
+                                    <button type="button" class="close" data-dismiss="modal"
+                                            aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="form-group">
+                                            <label class="bmd-label-static">你可以在此处填写内容</label><br>
+                                            <textarea id="formAddContent" class="form-control" rows="3"></textarea>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                            data-dismiss="modal">取消
+                                    </button>
+                                    <button type="button" class="btn btn-primary"
+                                            data-toggle="modal"
+                                            data-target="#confirmModal"
+                                            onclick="addCauserie()">
+                                        提交
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div th:replace="~{fragments/footer :: footer}">footer</div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    // 全局变量ID，用来存下要删除的文章id
+    let ID;
+    // 全局变量状态，用来存下要修改的文章状态
+    let STATUS = Boolean();
+
+    // 弹出删除modal
+    function showDeleteModal(id) {
+        // 将局部变量“要删除的文章id”存为全局变量，供删除函数调用！
+        ID = id;
+        $('#deleteModal').modal('show')
+    }
+
+    // 提交删除操作
+    function deleteById() {
+        let form = new FormData();
+        form.append("id", ID);
+        return fetch('/api/causerie', {
+            method: 'DELETE',
+            body: form
+        }).finally(refresh)
+    }
+
+    // 弹出编状态modal，并存下内容标识
+    function showEditStatusModal(id, status) {
+        // 将局部变量“要上架/下架的文章id”存为全局变量，供修改文章状态函数调用！
+        ID = id;
+        STATUS = status;
+        $('#editStatusModal').modal('show')
+    }
+
+    // 提交编辑随笔状态修改
+    function editStatus() {
+        let form = new FormData();
+        form.append("id", ID);
+        form.append("status", STATUS !== true);
+        return fetch('/api/causerie', {
+            method: 'PUT',
+            body: form
+        }).finally(refresh)
+    }
+
+    // 响应编辑随笔内容按钮
+    function showEditCauserieModal(id, content, creat_time, last_update_time) {
+        ID = id;
+
+        // 接收参数：内容、创建时间和最后编辑时间，填充到编辑界面弹窗
+        $("#formEditContent").attr("placeholder", content);
+        $("#formEditCreat_time").attr("placeholder", creat_time);
+        $("#formEditLast_update_time").attr("placeholder", last_update_time);
+
+        // 激活编辑内容界面弹窗
+        $('#editCauserieModal').modal('show');
+    }
+
+    // 提交编辑随笔内容修改
+    function editCauserie() {
+        let form = new FormData();
+        form.append("content", $("#formEditContent").val());
+        form.append("id", ID);
+        return fetch('/api/causerie', {
+            method: 'PUT',
+            body: form
+        }).finally(refresh)
+    }
+
+    // 提交新增随笔请求
+    function addCauserie() {
+        let form = new FormData();
+        form.append("content", $("#formAddContent").val());
+        return fetch('/api/causerie', {
+            method: 'POST',
+            body: form
+        }).finally(refresh)
+    }
+</script>
+<div th:replace="fragments/js :: js">js</div>
+</body>
+
+</html>

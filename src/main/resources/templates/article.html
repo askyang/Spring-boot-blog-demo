@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/head :: head"></head>
+
+<body>
+<div class="wrapper">
+    <div th:replace="fragments/sidebar :: sidebar">sidebar</div>
+    <div class="main-panel">
+        <div th:replace="~{fragments/navbar :: navbar}"></div>
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <a href="/article/addArticle">
+                        <button type="button" class="btn btn-danger">
+                            <i class="fa fa-calendar-plus-o">&nbsp;新增文章</i>
+                        </button>
+                    </a>
+                    <!-- 加入占位符，使在移动端时，标签和分类按钮显示在同一行 -->
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <!-- 分类入口按钮 -->
+                    <a href="/article/category">
+                        <button type="button" class="btn btn-info btn-round">
+                            <i class="fa fa-th-list">&nbsp;分类</i>
+                            <span class="badge badge-light" th:text="${informationService.getCategoryCount()}"></span>
+                            <span class="sr-only">unread messages</span>
+                        </button>
+                    </a>
+                    <!-- 标签入口按钮 -->
+                    <a href="/article/tag">
+                        <button type="button" class="btn btn-success btn-round">
+                            <i class="fa fa-tags">&nbsp;标签</i>
+                            <span class="badge badge-light" th:text="${informationService.getTagCount()}"></span>
+                            <span class="sr-only">unread messages</span>
+                        </button>
+                    </a>
+                    <!-- 弃用弹窗编辑，移动端显示效果不佳，并且容易误触导致弹窗消失 -->
+                </div>
+                <!-- 展示所有文章 -->
+                <div class="row">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th class="text-center">#</th>
+                            <th>标题</th>
+                            <th class="text-right">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="article : ${articles}">
+                            <td class="text-center" th:text="${articleStat.index}+1"></td>
+                            <td th:text="${article.title}"></td>
+                            <td class="td-actions text-right">
+                                <!-- 编辑按钮 -->
+                                <!-- 原本设计编辑界面和新增界面一致，但是会导致页面加载内容过多，
+                                故将编辑页面单独设计页面,见 editArticle.html -->
+                                <a th:href="'/article/editArticle?id='+${article.id}">
+                                    <button type="button" rel="tooltip" class="btn btn-info btn-round">
+                                        <i class="fa fa-pencil fa-fw"></i>
+                                    </button>
+                                </a>
+                                <!-- 下架按钮 -->
+                                <button type="button" rel="tooltip" class="btn btn-success btn-round"
+                                        th:onclick="showEditStatusModal([[${article.id}]], [[${article.status}]])">
+                                    <i th:if="${article.status}" class="fa fa-ban fa-fw"></i>
+                                    <i th:if="${!article.status}" class="fa fa-check fa-fw"></i>
+                                </button>
+                                <!-- 删除按钮 -->
+                                <button type="button" rel="tooltip" class="btn btn-danger btn-round"
+                                        th:onclick="showDeleteModal([[${article.id}]])">
+                                    <i class="fa fa-trash-o fa-fw"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <!-- editStatusModal-->
+                    <div th:replace="fragments/modal :: editStatusModal"></div>
+                    <!-- deleteModal-->
+                    <div th:replace="fragments/modal :: deleteModal"></div>
+                </div>
+            </div>
+        </div>
+        <div th:replace="~{fragments/footer :: footer}">footer</div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    // 全局变量ID，用来存下要删除的文章id
+    let ID;
+    // 全局变量状态，用来存下要修改的文章状态
+    let STATUS = Boolean();
+
+    function showDeleteModal(id) {
+        // 将局部变量“要删除的文章id”存为全局变量，供删除函数调用！
+        ID = id;
+        $('#deleteModal').modal('show')
+    }
+
+    function showEditStatusModal(id, status) {
+        // 将局部变量“要上架/下架的文章id”存为全局变量，供修改文章状态函数调用！
+        ID = id;
+        STATUS = status;
+        $('#editStatusModal').modal('show')
+    }
+
+    function deleteById() {
+        let form = new FormData();
+        form.append("id", ID);
+        return fetch('/api/article', {
+            method: 'DELETE',
+            body: form
+        }).finally(refresh)
+    }
+
+    function editStatus() {
+        let form = new FormData();
+        form.append("id", ID);
+        form.append("status", STATUS !== true);
+        return fetch('/api/article', {
+            method: 'PUT',
+            body: form
+        }).finally(refresh)
+    }
+</script>
+<div th:replace="fragments/js :: js">js</div>
+</body>
+
+</html>

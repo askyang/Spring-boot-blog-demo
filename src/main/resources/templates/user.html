@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh_CN" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/head :: head"></head>
+
+<body>
+<div class="wrapper">
+    <div th:replace="fragments/sidebar :: sidebar">sidebar</div>
+    <div class="main-panel">
+        <div th:replace="~{fragments/navbar :: navbar}"></div>
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header card-header-primary">
+                                <h4 class="card-title">编辑资料</h4>
+                                <p class="card-category">你可以在此处更新你的个人资料</p>
+                            </div>
+                            <div class="card-body">
+                                <form id="user">
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <div class="form-group bmd-form-group">
+                                                <label>昵称</label><br>
+                                                <input name="nickname" type="text" class="form-control"
+                                                       th:placeholder="${user.nickname}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <div class="form-group bmd-form-group">
+                                                <label>邮件地址</label><br>
+                                                <input name="email" type="email" class="form-control"
+                                                       th:placeholder="${user.email}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group bmd-form-group">
+                                                <label>头像地址</label><br>
+                                                <input name="profile_photo" type="text" class="form-control"
+                                                       th:placeholder="${user.profile_photo}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group bmd-form-group">
+                                                <label>登录名</label><br>
+                                                <input name="username" type="text" class="form-control"
+                                                       th:placeholder="${user.username}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group bmd-form-group">
+                                                <label>登陆密码</label><br>
+                                                <input name="password" type="password" class="form-control"
+                                                       placeholder="********">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group bmd-form-group">
+                                                <label>重复密码</label><br>
+                                                <input type="password" class="form-control" placeholder="********">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>关于我</label>
+                                                <div class="form-group bmd-form-group">
+                                                    <label>添加一些关于自己的描述</label><br>
+                                                    <textarea name="description" type="text" class="form-control"
+                                                              rows="5"
+                                                              th:placeholder="${user.description}"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="button" onclick="updateUser()" data-toggle="modal"
+                                            data-target="#confirmModal"
+                                            class="btn btn-primary pull-right">更新资料
+                                    </button>
+                                    <div th:replace="fragments/modal :: confirmModal"></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card card-profile">
+                            <div class="card-avatar">
+                                <a href="#profile_photo">
+                                    <img class="img" th:src="${user.profile_photo}">
+                                </a>
+                            </div>
+                            <div class="card-body">
+                                <h6 class="card-category text-gray" th:text="${user.email}"></h6>
+                                <h4 class="card-title" th:text="${user.nickname}"></h4>
+                                <p class="card-description" th:text="${user.description}"></p>
+                                <a href="#Follow" class="btn btn-primary btn-round">Follow</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div th:replace="~{fragments/footer :: footer}">footer</div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    function updateUser() {
+        let user = document.querySelector("#user");
+        return fetch('/api/user', {
+            method: 'PUT',
+            body: new FormData(user)
+        })
+    }
+</script>
+<div th:replace="fragments/js :: js">js</div>
+</body>
+
+</html>
